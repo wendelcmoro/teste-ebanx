@@ -4,25 +4,12 @@ require_once __DIR__ . '/Router.php';
 require_once __DIR__ . '/Controllers/AccountController.php';
 require_once __DIR__ . '/Models/Account.php';
 
-session_start();
-
-if (!isset($_SESSION['accounts'])) {
-    $_SESSION['accounts'] = [];
-}
-
 class App {
     public function run() {
         $router = new Router();
 
         $router->add('GET', '/', function() {
-            $data = [
-                'msg' => 'API is running'
-            ];
-
-            header('Content-Type: application/json');
-            echo json_encode($data);
-
-            return;
+            return 'Ok';
         });
         
         $router->add('POST', '/reset', function() {
@@ -30,17 +17,17 @@ class App {
             
             // Inicia o vetor de contas com uma conta de ID 300
             // e balanço 0
-            $account = new Account(300, 0);
-            $_SESSION['accounts'][] = $account;
-            
-            $data = [
-                'msg' => 'API reseted'
-            ];
+            $account = new Account("300", 0);
+            $auxObj = new stdClass();
+            $auxObj->id = $account->getId();
+            $auxObj->balance = $account->getBalance();
 
-            header('Content-Type: application/json');
-            echo json_encode($data);
+            $accountsData[] = $auxObj;
+            $json = json_encode($accountsData, JSON_PRETTY_PRINT);
+            $filename = 'accounts.json';
+            file_put_contents($filename, $json);
 
-            return;
+            return 'OK';
         });
 
         $router->add('GET', '/balance', function($params) {
