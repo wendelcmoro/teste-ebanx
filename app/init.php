@@ -2,6 +2,7 @@
 
 require_once __DIR__ . '/Router.php';
 require_once __DIR__ . '/Controllers/AccountController.php';
+require_once __DIR__ . '/Models/Account.php';
 
 session_start();
 
@@ -26,7 +27,12 @@ class App {
         
         $router->add('POST', '/reset', function() {
             $_SESSION['accounts'] = [];
-
+            
+            // Inicia o vetor de contas com uma conta de ID 300
+            // e balanço 0
+            $account = new Account(300, 0);
+            $_SESSION['accounts'][] = $account;
+            
             $data = [
                 'msg' => 'API reseted'
             ];
