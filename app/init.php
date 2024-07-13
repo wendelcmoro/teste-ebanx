@@ -3,7 +3,11 @@
 require_once __DIR__ . '/Router.php';
 require_once __DIR__ . '/Controllers/AccountController.php';
 
-$GLOBALS['accounts'] = [];
+session_start();
+
+if (!isset($_SESSION['accounts'])) {
+    $_SESSION['accounts'] = [];
+}
 
 class App {
     public function run() {
@@ -11,7 +15,7 @@ class App {
 
         $router->add('GET', '/', function() {
             $data = [
-                'msg' => 'Testing if API is running'
+                'msg' => 'API is running'
             ];
 
             header('Content-Type: application/json');
@@ -21,7 +25,7 @@ class App {
         });
         
         $router->add('POST', '/reset', function() {
-            $GLOBALS['accounts'] = [];
+            $_SESSION['accounts'] = [];
 
             $data = [
                 'msg' => 'API reseted'
@@ -35,6 +39,10 @@ class App {
 
         $router->add('GET', '/balance', function($params) {
             return (new AccountController())->getBalance($params);
+        });
+
+        $router->add('POST', '/event', function() {
+            return (new AccountController())->postEvent();
         });
 
         $router->run();
